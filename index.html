@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Horse Daily">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Horse Daily</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- Header -->
+    <header class="app-header">
+      <span class="header-title" id="headerTitle">Daily check</span>
+      <span class="header-date" id="headerDate"></span>
+    </header>
+
+    <!-- Screens -->
+    <main class="screen-wrap">
+      <div id="screen-daily" class="screen active"></div>
+      <div id="screen-weekly" class="screen"></div>
+      <div id="screen-history" class="screen"></div>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="daily" onclick="showScreen('daily',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Today</span>
+      </button>
+      <button class="nav-btn" data-screen="weekly" onclick="showScreen('weekly',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="14" x2="8" y2="14" stroke-width="3"/><line x1="12" y1="14" x2="12" y2="14" stroke-width="3"/><line x1="16" y1="14" x2="16" y2="14" stroke-width="3"/></svg>
+        <span>Week</span>
+      </button>
+      <button class="nav-btn" data-screen="history" onclick="showScreen('history',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Trends</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/daily.js"></script>
+  <script src="js/weekly.js"></script>
+  <script src="js/history.js"></script>
+  <script>
+    // Header date
+    document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+
+    // Screen routing
+    const screenTitles = { daily: 'Daily check', weekly: 'Week planner', history: 'Trends' };
+    function showScreen(name, btn) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+      btn.classList.add('active');
+      document.getElementById('headerTitle').textContent = screenTitles[name];
+    }
+
+    // Init all screens
+    initDaily();
+    initWeekly();
+    initHistory();
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
