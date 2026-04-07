@@ -18,7 +18,7 @@ const TASK_DEFS = {
     { id:'t_feed_obs',      label:'Observed at morning feed — eating well',  critical:false, note:'' },
   ],
   therapy: [
-    { id:'t_p2_main',       label:'P2 session — back + SI + glutes',        critical:true,  note:'15–25 min depending on day type' },
+    { id:'t_p3_main',       label:'P3 session — back + SI + glutes',        critical:true,  note:'15–25 min depending on day type' },
     { id:'t_equipod',       label:'Equipod — bilateral asymmetry check',     critical:false, note:'Target tighter/shorter side' },
     { id:'t_sheet',         label:'Therapy sheet on (20–45 min post-ride)',  critical:false, note:'While muscles still warm' },
     { id:'t_handwalk_cool', label:'Hand walk cool-down after ride',          critical:true,  note:'10–15 min minimum' },
@@ -28,12 +28,12 @@ const TASK_DEFS = {
     { id:'t_postrun_walk',  label:'Hand walked 10–15 min after run',          critical:true,  note:'Watch every hind step' },
     { id:'t_show_sheet',    label:'Therapy sheet on within 30 min of run',    critical:false, note:'' },
     { id:'t_between_runs',  label:'Kept moving between runs (no long stall)', critical:false, note:'SI horses stiffen fast when standing' },
-    { id:'t_p2_show',       label:'P2 session this evening',                  critical:true,  note:'20 min — SI + glutes focused' },
+    { id:'t_p3_show',       label:'P3 session this evening',                  critical:true,  note:'20 min — SI + glutes focused' },
     { id:'t_equipod_show',  label:'Equipod on reactive spots post-show',      critical:false, note:'' },
   ],
   hard: [
     { id:'t_hard_quality',  label:'Session kept short and quality-focused',  critical:false, note:'Quit while he feels good' },
-    { id:'t_p2_hard',       label:'P2 within 1 hour post-ride',              critical:true,  note:'Full back + SI + glutes' },
+    { id:'t_p3_hard',       label:'P3 within 1 hour post-ride',              critical:true,  note:'Full back + SI + glutes' },
     { id:'t_equipod_hard',  label:'Equipod — check both sides',              critical:false, note:'' },
     { id:'t_sheet_hard',    label:'Therapy sheet after tools',               critical:false, note:'30–45 min' },
   ],
@@ -41,15 +41,15 @@ const TASK_DEFS = {
     { id:'t_longlow',       label:'Long & low work included',                critical:false, note:'True back lift, not just head down' },
     { id:'t_backing',       label:'Straight backing done',                   critical:true,  note:'Even 5 min — biggest SI tool at home' },
     { id:'t_transitions',   label:'Lots of transitions — push from behind',  critical:false, note:'' },
-    { id:'t_p2_found',      label:'P2 session post-ride',                    critical:true,  note:'15–20 min maintenance' },
+    { id:'t_p3_found',      label:'P3 session post-ride',                    critical:true,  note:'15–20 min maintenance' },
     { id:'t_equipod_found', label:'Equipod spot check',                      critical:false, note:'' },
   ],
   stretch: [
     { id:'t_stretch_only',  label:'Kept to walk/easy trot, no pressure',    critical:false, note:'' },
-    { id:'t_p2_stretch',    label:'P2 short session (15 min)',               critical:false, note:'Maintenance' },
+    { id:'t_p3_stretch',    label:'P3 short session (15 min)',               critical:false, note:'Maintenance' },
   ],
   rest: [
-    { id:'t_p2_rest',       label:'P2 optional — 15 min light session',     critical:false, note:'Especially if tight yesterday' },
+    { id:'t_p3_rest',       label:'P3 optional — 15 min light session',     critical:false, note:'Especially if tight yesterday' },
     { id:'t_turnout',       label:'Turnout / movement time',                 critical:false, note:'' },
   ],
 };
@@ -68,66 +68,124 @@ const PROTOCOLS = {
     green:{ color:'green', badge:'On track', title:'Show day — feeling good',
       warmup:['Walk → trot → lope, keep it short and purposeful','Check: even behind, soft back, clean leads','If he feels good — STOP early'],
       postrun:['Hand walk 10–15 min after run — watch every step','Therapy sheet on within 30 min'],
-      evening:['P2: full back + SI, 15–20 min','Equipod: check both sides for asymmetry','Electrolytes if hot day']},
+      evening:['P3: full back + SI, 15–20 min','Equipod: check both sides for asymmetry','Electrolytes if hot day']},
     amber:{ color:'amber', badge:'Watch him', title:'Show day — monitor closely',
       warmup:['Minimal warm-up — forward and soft only','No extra stops or rollbacks'],
       postrun:['Hand walk 15 min — watch every step','Therapy sheet on immediately'],
-      evening:['P2: SI + glutes, 20–25 min','Equipod: tighter side specifically','Schedule chiro within 48 hours']},
+      evening:['P3: SI + glutes, 20–25 min','Equipod: tighter side specifically','Schedule chiro within 48 hours']},
     red:{ color:'red', badge:'Protect him', title:'Show day — back off',
       warmup:['Walk and trot only — no stops','Make the call: if uneven, scratch'],
-      postrun:['Hand walk 20 min','P2 immediately after walk-out','Therapy sheet on for haul home'],
-      evening:['P2 second session if still tight','Call chiro — book next available immediately','Tomorrow: hand walk only']}
+      postrun:['Hand walk 20 min','P3 immediately after walk-out','Therapy sheet on for haul home'],
+      evening:['P3 second session if still tight','Call chiro — book next available immediately','Tomorrow: hand walk only']}
   },
   hard: {
     green:{ color:'green', badge:'Go', title:'Hard work — good baseline',
       ride:['Quality over quantity — short intentional session','Quit while he feels good'],
-      post:['Hand walk 10–15 min cool-down','P2: full session within 1 hour','Equipod: both sides','Therapy sheet 30–45 min after therapy']},
+      post:['Hand walk 10–15 min cool-down','P3: full session within 1 hour','Equipod: both sides','Therapy sheet 30–45 min after therapy']},
     amber:{ color:'amber', badge:'Lighten up', title:'Hard work — cut it back',
       ride:['Half session — quality not volume','No repetitive stops'],
-      post:['P2: 25 min focused on SI','Equipod: weaker side','Therapy sheet after tools'],
+      post:['P3: 25 min focused on SI','Equipod: weaker side','Therapy sheet after tools'],
       evening:['Schedule chiro this week','Tomorrow: stretch or foundation only']},
     red:{ color:'red', badge:'Stand down', title:'Hard work — do not proceed',
       ride:['Do NOT do hard work — switch to hand walk only'],
-      post:['P2: 25–30 min full session','Equipod both sides','Therapy sheet 45 min'],
+      post:['P3: 25–30 min full session','Equipod both sides','Therapy sheet 45 min'],
       evening:['Call chiro — book immediately','Tomorrow: stretch only']}
   },
   foundation: {
     green:{ color:'green', badge:'Build', title:'Foundation — ideal day',
       ride:['Long and low — true back lift','Slow trot, big circles, both directions','Lots of transitions — push from behind','Straight backing — correct and slow (key for SI)','Quit when lifted and engaged'],
-      post:['Hand walk 10 min','P2: 15–20 min routine','Equipod: spot check both sides']},
+      post:['Hand walk 10 min','P3: 15–20 min routine','Equipod: spot check both sides']},
     amber:{ color:'amber', badge:'Easy does it', title:'Foundation — go easy',
       ride:['20–25 min max, long and low only','Walk it out if he stiffens — do not push'],
-      post:['P2: 20–25 min focused on SI + back','Equipod on tighter side','Therapy sheet after']},
+      post:['P3: 20–25 min focused on SI + back','Equipod on tighter side','Therapy sheet after']},
     red:{ color:'red', badge:'Stretch only', title:'Foundation — drop to stretch only',
       ride:['Walk and trot only, 10–15 min max'],
-      post:['P2: 25–30 min thorough','Equipod both sides','Call chiro — do not wait']}
+      post:['P3: 25–30 min thorough','Equipod both sides','Call chiro — do not wait']}
   },
   stretch: {
     green:{ color:'green', badge:'Maintain', title:'Stretch day',
       ride:['20 min max, walk and easy trot, long rein'],
-      post:['P2: 15 min topline + SI','Equipod: quick bilateral check']},
+      post:['P3: 15 min topline + SI','Equipod: quick bilateral check']},
     amber:{ color:'amber', badge:'Extra easy', title:'Stretch — go lighter',
       ride:['Walk only or very easy trot — 15 min max'],
-      post:['P2: 20–25 min','Equipod on reactive side']},
+      post:['P3: 20–25 min','Equipod on reactive side']},
     red:{ color:'red', badge:'No ride', title:'Stretch — hand walk only',
       ride:['Do not ride today — hand walk 15–20 min only'],
-      post:['P2: 25–30 min','Equipod both sides','Call chiro immediately']}
+      post:['P3: 25–30 min','Equipod both sides','Call chiro immediately']}
   },
   light: {
     green:{ color:'blue', badge:'Recovery', title:'Hand walk day',
-      tasks:['Hand walk 15–20 min — watch hind step throughout','P2: 15 min maintenance','Equipod: quick bilateral check']},
+      tasks:['Hand walk 15–20 min — watch hind step throughout','P3: 15 min maintenance','Equipod: quick bilateral check']},
     amber:{ color:'amber', badge:'Monitor', title:'Hand walk — watch him',
-      tasks:['Hand walk 20 min — note if step improves as he warms','P2: 20–25 min SI + glutes','Consider scheduling chiro sooner']},
+      tasks:['Hand walk 20 min — note if step improves as he warms','P3: 20–25 min SI + glutes','Consider scheduling chiro sooner']},
     red:{ color:'red', badge:'Act now', title:'Hand walk — needs attention',
-      tasks:['Hand walk 15 min — slow and forward','P2: 25–30 min full session','Call chiro today','Do not ride tomorrow until hind step normalizes']}
+      tasks:['Hand walk 15 min — slow and forward','P3: 25–30 min full session','Call chiro today','Do not ride tomorrow until hind step normalizes']}
   },
   off: {
     any:{ color:'off', badge:'Rest', title:'Day off — not at a show',
-      tasks:['Check hind step and topline visually at feed','P2 optional — 15 min if tight yesterday','Turnout if possible']}
+      tasks:['Check hind step and topline visually at feed','P3 optional — 15 min if tight yesterday','Turnout if possible']}
   }
 };
 
 const SECTION_LABELS = { morning:'Morning check', warmup:'Warm-up', ride:'Ride plan', tasks:'Tasks', post:'Immediately after', postrun:'After your run', evening:'Evening' };
+
+const PLACEMENT_GUIDE_HTML = `
+<div class="placement-guide">
+  <button class="placement-toggle" onclick="togglePlacementGuide(this)" aria-expanded="false">
+    <span>⚡ P3 + Equipod placement guide</span>
+    <span class="placement-chevron">▼</span>
+  </button>
+  <div class="placement-body" style="display:none">
+
+    <div class="placement-section">
+      <div class="placement-hdr placement-hdr-p3">P3 (PEMF) — SI → glutes → hamstrings → back</div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-red"></span>1. SI joint — PRIMARY <span class="placement-badge">5 min</span></div>
+        <div class="placement-detail">Top of croup, just either side of spine where pelvis meets spine. 2–3 min per side, slow passes or hold. <strong>Most important spot.</strong></div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-orange"></span>2. Glutes — power muscle <span class="placement-badge">8 min</span></div>
+        <div class="placement-detail">Large muscle mass behind SI, upper hindquarter. 2–4 min each side, cover full muscle. Protects the SI.</div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-yellow"></span>3. Hamstrings — engagement <span class="placement-badge">per need</span></div>
+        <div class="placement-detail">Back of hind leg below glute. 1–2 min each side. Use when stepping short or lacking push and reach.</div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-blue"></span>4. Longissimus — back line <span class="placement-badge">5 min</span></div>
+        <div class="placement-detail">Along both sides of spine, mid-back to loin. Light passes down each side, 3–5 min total. Prevents back tightening after SI compensation.</div>
+      </div>
+    </div>
+
+    <div class="placement-section">
+      <div class="placement-hdr placement-hdr-equipod">Equipod (microcurrent) — after P3, target the asymmetry</div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-red"></span>1. SI support points <span class="placement-badge">not on spine</span></div>
+        <div class="placement-detail">Just OFF the SI joint, slightly lower into muscle. You're treating the support system, not the joint itself.</div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-orange"></span>2. Gluteal trigger points <span class="placement-badge">15–20 min/side</span></div>
+        <div class="placement-detail">Middle of glute where it feels tight or hard. Palpate first — treat what you find.</div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-yellow"></span>3. Weaker side — CRITICAL <span class="placement-badge">focus here</span></div>
+        <div class="placement-detail">Identify which side is shorter, stiffer, less engaged. Put most Equipod time here. This is how you fix asymmetry.</div>
+      </div>
+      <div class="placement-step">
+        <div class="placement-step-title"><span class="pdot pdot-blue"></span>4. Hamstring insertion <span class="placement-badge">10–15 min</span></div>
+        <div class="placement-detail">Top of gaskin where muscle ties into body. Helps push, reach, and engagement.</div>
+      </div>
+    </div>
+
+    <div class="placement-section placement-adjust">
+      <div class="placement-hdr placement-hdr-adjust">🚨 Adjust based on what you see today</div>
+      <div class="placement-step"><div class="placement-detail"><strong>Stepping short behind →</strong> increase hamstrings + glutes on P3</div></div>
+      <div class="placement-step"><div class="placement-detail"><strong>One direction worse →</strong> hammer weaker side with Equipod</div></div>
+      <div class="placement-step"><div class="placement-detail"><strong>Back tight after work →</strong> add more longissimus on P3</div></div>
+    </div>
+
+  </div>
+</div>`;
 
 let dScores  = {};
 let dFlags   = {};
@@ -149,10 +207,13 @@ function buildDailyHTML() {
 </div>
 
 <div id="d-asst">
-  <!-- Daily supplements always visible at top -->
   <div class="sec">
     <div class="sec-label">Daily supplements</div>
     <div id="d-supps-top"></div>
+  </div>
+
+  <div class="sec">
+    ${PLACEMENT_GUIDE_HTML}
   </div>
 
   <div class="sec">
@@ -199,7 +260,7 @@ function buildDailyHTML() {
 
   <div class="sec">
     <div class="sec-label">Notes</div>
-    <textarea class="notes-area" id="d-notes" rows="3" placeholder="Anything notable — sticky lead, skipped P2, chiro was Tuesday..."></textarea>
+    <textarea class="notes-area" id="d-notes" rows="3" placeholder="Anything notable — sticky lead, skipped P3, chiro was Tuesday..."></textarea>
   </div>
   <button class="action-btn" onclick="saveTodayRide()">Save today's record</button>
 </div>
@@ -209,8 +270,16 @@ function buildDailyHTML() {
 </div>`;
 }
 
+function togglePlacementGuide(btn) {
+  const body = btn.nextElementSibling;
+  const chevron = btn.querySelector('.placement-chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
 function wireDailyEvents() {
-  // Render supplements immediately — always visible
   renderSupplementsTop();
 
   const tbl = document.getElementById('d-score-tbl');
@@ -286,7 +355,6 @@ function updateDailyOutput() {
   ps.style.display = 'block';
   renderDailyProtocol(tier);
   renderTaskChecklist();
-  // Re-render top supplements to reflect any state changes
   renderSupplementsTop();
   if (dMode === 'owner') renderOwnerView();
 }
@@ -347,10 +415,8 @@ function handleTaskToggle(cb) {
   const done = cb.checked;
   const now  = done ? new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '';
   taskState[id] = { done, time: now };
-  // Re-render just that row — could be in tasklist or supps-top
   const task = findTaskDef(id);
-  // Update ALL instances of this row (supplement appears in top section always)
-  document.querySelectorAll('#row_'+id).forEach(row => {
+  document.querySelectorAll('[id="row_'+id+'"]').forEach(row => {
     if (row && task) {
       const isCrit = task.critical && !done;
       row.className = 'task-row'+(isCrit?' task-row-critical':'')+(done?' task-row-done':'');
@@ -395,7 +461,6 @@ function renderOwnerView() {
   const dayLabel = {show:'Show day',hard:'Hard work',foundation:'Foundation',stretch:'Stretch',light:'Hand walk',off:'Home / off'}[dDayType]||'Not set';
   const tierColor = tier==='red'?'#e03030':tier==='amber'?'#e8a020':'#2d6a4f';
 
-  // Build all tasks
   const groups = dDayType ? (DAY_TASK_MAP[dDayType]||['morning']) : ['morning'];
   const allTasks = [];
   groups.forEach(g => { if(TASK_DEFS[g]) allTasks.push(...TASK_DEFS[g]); });
@@ -414,7 +479,6 @@ function renderOwnerView() {
     </div>
   </div>`;
 
-  // Progress bar
   h += `<div style="margin-bottom:16px">
     <div style="display:flex;justify-content:space-between;margin-bottom:5px">
       <span style="font-size:13px;font-weight:600">Tasks completed</span>
@@ -425,14 +489,12 @@ function renderOwnerView() {
     </div>
   </div>`;
 
-  // Required items not yet done — most important
   if (critMiss.length) {
     h += `<div class="chiro-alert" style="margin-bottom:14px"><strong>Still required — not done yet:</strong>`;
     critMiss.forEach(t => { h += `<div style="margin-top:5px;display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#e03030;display:inline-block;flex-shrink:0"></span><span>${t.label}</span></div>`; });
     h += '</div>';
   }
 
-  // Completed items with times
   if (done.length) {
     h += `<div style="margin-bottom:14px"><div class="sec-label" style="margin-bottom:8px">Done</div>`;
     done.forEach(t => {
@@ -448,7 +510,6 @@ function renderOwnerView() {
     h += '</div>';
   }
 
-  // Not done / optional
   const optMiss = notDone.filter(t => !t.critical);
   if (optMiss.length) {
     h += `<div style="margin-bottom:14px"><div class="sec-label" style="margin-bottom:8px">Not done / optional</div>`;
@@ -456,7 +517,6 @@ function renderOwnerView() {
     h += '</div>';
   }
 
-  // Notes
   const notes = document.getElementById('d-notes') ? document.getElementById('d-notes').value.trim() : '';
   if (notes) h += `<div style="background:#faeeda;border-radius:10px;padding:10px 13px;font-size:13px;color:#7a4410;margin-top:4px"><strong>Notes:</strong> ${notes}</div>`;
 
@@ -491,7 +551,6 @@ function saveTodayRide() {
 function loadTodayState() {
   const log = getTaskLog(todayKey());
   taskState = log && log.tasks ? {...log.tasks} : {};
-  // Always render supplements at top with saved state
   renderSupplementsTop();
   if (!log||!log.dayType) return;
   dDayType = log.dayType;
