@@ -7,7 +7,7 @@ const SUPPLEMENTS = [
   { id:'sup_vite',    label:'Vitamin E',        dose:'Per weight — daily, non-negotiable',      critical:true  },
   { id:'sup_amino',   label:'Amino acids',       dose:'Lysine / threonine / methionine — topline + SI support', critical:true  },
   { id:'sup_omega',   label:'Omega-3 / flax',    dose:'Ground flax or flax oil — anti-inflammatory',            critical:true  },
-  { id:'sup_electro', label:'Electrolytes',       dose:'After hard work, show days, and hot weather',            critical:false },
+  { id:'sup_electro', label:'Electrolytes',       dose:'Show days, hard work days, and hot weather',            critical:false },
   { id:'sup_water',   label:'Fresh water check',  dose:'Full bucket, clean — verify every day',                  critical:true  },
 ];
 
@@ -122,7 +122,7 @@ const PROTOCOLS = {
       tasks:['Hand walk 15 min — slow and forward','P2: 25–30 min full session','Call chiro today','Do not ride tomorrow until hind step normalizes']}
   },
   off: {
-    any:{ color:'off', badge:'Rest', title:'Day off',
+    any:{ color:'off', badge:'Rest', title:'Day off — not at a show',
       tasks:['Check hind step and topline visually at feed','P2 optional — 15 min if tight yesterday','Turnout if possible']}
   }
 };
@@ -149,16 +149,23 @@ function buildDailyHTML() {
 </div>
 
 <div id="d-asst">
+  <!-- Daily supplements always visible at top -->
+  <div class="sec">
+    <div class="sec-label">Daily supplements</div>
+    <div id="d-supps-top"></div>
+  </div>
+
   <div class="sec">
     <div class="sec-label">Day type</div>
     <div class="day-type-grid">
-      <button class="dtype-btn" data-type="show">Show day</button>
-      <button class="dtype-btn" data-type="hard">Hard work</button>
-      <button class="dtype-btn" data-type="foundation">Foundation</button>
-      <button class="dtype-btn" data-type="stretch">Stretch</button>
-      <button class="dtype-btn" data-type="light">Hand walk</button>
-      <button class="dtype-btn" data-type="off">Day off</button>
+      <button class="dtype-btn" data-type="show">🏆 Show day</button>
+      <button class="dtype-btn" data-type="hard">💪 Hard work</button>
+      <button class="dtype-btn" data-type="foundation">🔧 Foundation</button>
+      <button class="dtype-btn" data-type="stretch">🌿 Stretch</button>
+      <button class="dtype-btn" data-type="light">🚶 Hand walk</button>
+      <button class="dtype-btn dtype-btn-off" data-type="off">🏠 Home / off</button>
     </div>
+    <div class="dtype-hint" id="d-dtype-hint">Tap a day type to load the task list ↑</div>
   </div>
 
   <div class="sec">
@@ -188,10 +195,6 @@ function buildDailyHTML() {
       <div class="sec-label">Task checklist</div>
       <div id="d-tasklist"></div>
     </div>
-    <div class="sec">
-      <div class="sec-label">Daily supplements</div>
-      <div id="d-supps"></div>
-    </div>
   </div>
 
   <div class="sec">
@@ -207,6 +210,9 @@ function buildDailyHTML() {
 }
 
 function wireDailyEvents() {
+  // Render supplements immediately — always visible
+  renderSupplementsTop();
+
   const tbl = document.getElementById('d-score-tbl');
   SCORE_ITEMS.forEach((item, i) => {
     dScores[i] = 0;
@@ -240,9 +246,13 @@ function wireDailyEvents() {
 
   document.querySelectorAll('.dtype-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.dtype-btn').forEach(b => b.className = 'dtype-btn');
+      document.querySelectorAll('.dtype-btn').forEach(b => {
+        b.className = b.dataset.type === 'off' ? 'dtype-btn dtype-btn-off' : 'dtype-btn';
+      });
       btn.classList.add('sel-'+btn.dataset.type);
       dDayType = btn.dataset.type;
+      const hint = document.getElementById('d-dtype-hint');
+      if (hint) hint.style.display = 'none';
       updateDailyOutput(); persistTodayState();
     });
   });
@@ -276,7 +286,8 @@ function updateDailyOutput() {
   ps.style.display = 'block';
   renderDailyProtocol(tier);
   renderTaskChecklist();
-  renderSupplements();
+  // Re-render top supplements to reflect any state changes
+  renderSupplementsTop();
   if (dMode === 'owner') renderOwnerView();
 }
 
@@ -309,10 +320,12 @@ function renderTaskChecklist() {
   document.getElementById('d-tasklist').querySelectorAll('.task-cb').forEach(cb => cb.addEventListener('change', () => handleTaskToggle(cb)));
 }
 
-function renderSupplements() {
+function renderSupplementsTop() {
+  const el = document.getElementById('d-supps-top');
+  if (!el) return;
   const tasks = SUPPLEMENTS.map(s => ({ id:s.id, label:s.label, critical:s.critical, note:s.dose }));
-  document.getElementById('d-supps').innerHTML = tasks.map(t => taskRowHTML(t)).join('');
-  document.getElementById('d-supps').querySelectorAll('.task-cb').forEach(cb => cb.addEventListener('change', () => handleTaskToggle(cb)));
+  el.innerHTML = tasks.map(t => taskRowHTML(t)).join('');
+  el.querySelectorAll('.task-cb').forEach(cb => cb.addEventListener('change', () => handleTaskToggle(cb)));
 }
 
 function taskRowHTML(task) {
@@ -334,24 +347,26 @@ function handleTaskToggle(cb) {
   const done = cb.checked;
   const now  = done ? new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '';
   taskState[id] = { done, time: now };
-  // Re-render just that row
+  // Re-render just that row — could be in tasklist or supps-top
   const task = findTaskDef(id);
-  const row  = document.getElementById('row_'+id);
-  if (row && task) {
-    const isCrit = task.critical && !done;
-    row.className = 'task-row'+(isCrit?' task-row-critical':'')+(done?' task-row-done':'');
-    const lbl = row.querySelector('.task-label');
-    if (lbl) {
-      const existing = lbl.querySelector('.task-critical-badge');
-      if (existing) existing.remove();
-      if (isCrit) lbl.insertAdjacentHTML('beforeend',' <span class="task-critical-badge">Required</span>');
+  // Update ALL instances of this row (supplement appears in top section always)
+  document.querySelectorAll('#row_'+id).forEach(row => {
+    if (row && task) {
+      const isCrit = task.critical && !done;
+      row.className = 'task-row'+(isCrit?' task-row-critical':'')+(done?' task-row-done':'');
+      const lbl = row.querySelector('.task-label');
+      if (lbl) {
+        const existing = lbl.querySelector('.task-critical-badge');
+        if (existing) existing.remove();
+        if (isCrit) lbl.insertAdjacentHTML('beforeend',' <span class="task-critical-badge">Required</span>');
+      }
+      let timeEl = row.querySelector('.task-time');
+      if (done && now) {
+        if (!timeEl) { timeEl = document.createElement('span'); timeEl.className='task-time'; row.appendChild(timeEl); }
+        timeEl.textContent = now;
+      } else if (timeEl) timeEl.remove();
     }
-    let timeEl = row.querySelector('.task-time');
-    if (done && now) {
-      if (!timeEl) { timeEl = document.createElement('span'); timeEl.className='task-time'; row.appendChild(timeEl); }
-      timeEl.textContent = now;
-    } else if (timeEl) timeEl.remove();
-  }
+  });
   persistTodayState();
   if (dMode === 'owner') renderOwnerView();
 }
@@ -377,7 +392,7 @@ function renderOwnerView() {
   const el = document.getElementById('d-owner-content');
   const { tier, avg, low, anyFlag } = getDailyTier();
   const today = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  const dayLabel = {show:'Show day',hard:'Hard work',foundation:'Foundation',stretch:'Stretch',light:'Hand walk',off:'Day off'}[dDayType]||'Not set';
+  const dayLabel = {show:'Show day',hard:'Hard work',foundation:'Foundation',stretch:'Stretch',light:'Hand walk',off:'Home / off'}[dDayType]||'Not set';
   const tierColor = tier==='red'?'#e03030':tier==='amber'?'#e8a020':'#2d6a4f';
 
   // Build all tasks
@@ -475,10 +490,15 @@ function saveTodayRide() {
 
 function loadTodayState() {
   const log = getTaskLog(todayKey());
+  taskState = log && log.tasks ? {...log.tasks} : {};
+  // Always render supplements at top with saved state
+  renderSupplementsTop();
   if (!log||!log.dayType) return;
   dDayType = log.dayType;
   const btn = document.querySelector(`.dtype-btn[data-type="${dDayType}"]`);
   if (btn) btn.classList.add('sel-'+dDayType);
+  const hint = document.getElementById('d-dtype-hint');
+  if (hint) hint.style.display = 'none';
   if (log.scores) Object.keys(log.scores).forEach(i => {
     const v = log.scores[i];
     if (v>0) {
@@ -491,6 +511,5 @@ function loadTodayState() {
     if(log.flags[i]){dFlags[i]=true; const c=document.getElementById('df'+i); if(c)c.checked=true;}
   });
   if (log.notes && document.getElementById('d-notes')) document.getElementById('d-notes').value=log.notes;
-  taskState = log.tasks ? {...log.tasks} : {};
   updateDailyOutput();
 }
